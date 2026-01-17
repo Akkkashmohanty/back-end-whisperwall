@@ -46,9 +46,14 @@ enum ResetStatus {
   REJECTED
 }
 
+enum PostVisibility {
+  VISIBLE
+  HIDDEN
+  DELETED
+}
+
 /* ============================
    CORE USER (REAL IDENTITY)
-   NEVER EXPOSED TO PUBLIC
 ============================ */
 
 model User {
@@ -70,7 +75,7 @@ model User {
 }
 
 /* ============================
-   PUBLIC ANONYMOUS PROFILE
+   ANONYMOUS PROFILE
 ============================ */
 
 model AnonymousProfile {
@@ -80,46 +85,51 @@ model AnonymousProfile {
   user       User     @relation(fields: [userId], references: [id])
 
   createdAt  DateTime @default(now())
+
+  posts      Post[]
+  reports    Report[]
 }
 
 /* ============================
-   COLLEGE VERIFICATION
+   VERIFICATION
 ============================ */
 
 model VerificationRequest {
-  id               String            @id @default(uuid())
-  userId           String            @unique
-  user             User              @relation(fields: [userId], references: [id])
+  id               String             @id @default(uuid())
+  userId           String             @unique
+  user             User               @relation(fields: [userId], references: [id])
 
   type             VerificationType
   collegeEmail     String?
   idCardImageUrl   String?
 
   status           VerificationStatus @default(PENDING)
-  reviewedByAdmin  String?
-  reviewedAt       DateTime?
 
-  createdAt        DateTime @default(now())
+  reviewedByAdminId String?
+  reviewedByAdmin   Admin?            @relation(fields: [reviewedByAdminId], references: [id])
+
+  reviewedAt       DateTime?
+  createdAt        DateTime           @default(now())
 }
 
 /* ============================
-   PASSWORD RESET (ADMIN CONTROLLED)
+   PASSWORD RESET
 ============================ */
 
 model PasswordResetRequest {
-  id        String     @id @default(uuid())
+  id        String      @id @default(uuid())
   userId    String
-  user      User       @relation(fields: [userId], references: [id])
+  user      User        @relation(fields: [userId], references: [id])
 
-  token     String     @unique
+  token     String?     @unique
   status    ResetStatus @default(PENDING)
 
-  createdAt DateTime   @default(now())
+  createdAt DateTime    @default(now())
   usedAt    DateTime?
 }
 
 /* ============================
-   ADMIN USERS
+   ADMIN
 ============================ */
 
 model Admin {
@@ -129,4 +139,43 @@ model Admin {
   role       String   @default("MODERATOR")
 
   createdAt  DateTime @default(now())
+
+  reviewedVerifications VerificationRequest[]
+}
+
+/* ============================
+   POSTS
+============================ */
+
+model Post {
+  id                 String           @id @default(uuid())
+  content            String
+  college            String
+  authorProfileId    String
+  visibility         PostVisibility   @default(VISIBLE)
+  reportCount        Int              @default(0)
+  createdAt          DateTime         @default(now())
+
+  authorProfile      AnonymousProfile @relation(fields: [authorProfileId], references: [id])
+  reports            Report[]
+
+  @@index([college])
+  @@index([createdAt])
+}
+
+/* ============================
+   REPORTS
+============================ */
+
+model Report {
+  id          String   @id @default(uuid())
+  reason      String
+  postId      String
+  reporterId  String
+  createdAt   DateTime @default(now())
+
+  post        Post             @relation(fields: [postId], references: [id])
+  reporter    AnonymousProfile @relation(fields: [reporterId], references: [id])
+
+  @@unique([postId, reporterId])
 }

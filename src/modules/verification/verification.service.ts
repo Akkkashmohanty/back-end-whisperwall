@@ -6,7 +6,7 @@ export async function approveVerification(userId: string, adminId: string) {
       where: { userId },
       data: {
         status: "APPROVED",
-        reviewedByAdmin: adminId,
+        reviewedByAdminId: adminId,   //FIX HERE
         reviewedAt: new Date(),
       },
     }),
@@ -23,7 +23,7 @@ export async function rejectVerification(userId: string, adminId: string) {
       where: { userId },
       data: {
         status: "REJECTED",
-        reviewedByAdmin: adminId,
+        reviewedByAdminId: adminId,   //FIX HERE
         reviewedAt: new Date(),
       },
     }),
