@@ -4,9 +4,6 @@ import adminRoutes from "@modules/admin/admin.routes";import postRoutes from "@m
 import reportRoutes from "@modules/reports/report.routes";
 import userRoutes from "@modules/users/user.routes";
 
-
-
-
 const router = Router();
 
 router.use("/auth", authRoutes);
