@@ -52,6 +52,12 @@ enum PostVisibility {
   DELETED
 }
 
+enum CommentVisibility {
+  VISIBLE
+  HIDDEN
+  DELETED
+}
+
 /* ============================
    CORE USER (REAL IDENTITY)
 ============================ */
@@ -87,7 +93,12 @@ model AnonymousProfile {
   createdAt  DateTime @default(now())
 
   posts      Post[]
+  comments   Comment[]
   reports    Report[]
+
+  commentReports CommentReport[]
+
+  postLikes PostLike[]
 }
 
 /* ============================
@@ -158,6 +169,8 @@ model Post {
 
   authorProfile      AnonymousProfile @relation(fields: [authorProfileId], references: [id])
   reports            Report[]
+  likes              PostLike[]
+  comments           Comment[]
 
   @@index([college])
   @@index([createdAt])
@@ -178,4 +191,67 @@ model Report {
   reporter    AnonymousProfile @relation(fields: [reporterId], references: [id])
 
   @@unique([postId, reporterId])
+}
+
+/* ============================
+   COMMENTS MODULE
+============================ */
+
+model Comment {
+  id               String             @id @default(uuid())
+  content          String
+  postId           String
+  authorProfileId  String
+  parentId         String?
+  visibility       CommentVisibility  @default(VISIBLE)
+  reportCount      Int                @default(0)
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  post             Post               @relation(fields: [postId], references: [id])
+  authorProfile    AnonymousProfile   @relation(fields: [authorProfileId], references: [id])
+  parent           Comment?           @relation("CommentReplies", fields: [parentId], references: [id])
+  replies          Comment[]          @relation("CommentReplies")
+
+  reports          CommentReport[]
+
+  @@index([postId, createdAt])
+  @@index([authorProfileId])
+  @@index([parentId])
+}
+
+/* ============================
+   REPORT REPORTS MODEL
+============================ */
+
+model CommentReport {
+  id          String   @id @default(uuid())
+  commentId   String
+  reporterId  String
+  reason      String
+  createdAt   DateTime @default(now())
+
+  comment     Comment          @relation(fields: [commentId], references: [id])
+  reporter    AnonymousProfile @relation(fields: [reporterId], references: [id])
+
+  @@unique([commentId, reporterId])
+}
+
+/* ============================
+   LIKE MODULE
+============================ */
+
+model PostLike {
+  id         String   @id @default(uuid())
+  postId     String
+  profileId  String
+  createdAt  DateTime @default(now())
+
+  post        Post             @relation(fields: [postId], references: [id])
+  profile     AnonymousProfile @relation(fields: [profileId], references: [id])
+
+  @@unique([postId, profileId])
+  @@index([postId])
+  @@index([profileId])
 }
