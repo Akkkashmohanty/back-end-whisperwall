@@ -3,4 +3,8 @@ export interface PostResponse {
   content: string;
   college: string;
   createdAt: Date;
+
+  _count: {
+    likes: number;
+  };
 }

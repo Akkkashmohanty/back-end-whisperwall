@@ -4,6 +4,7 @@ import adminRoutes from "@modules/admin/admin.routes";import postRoutes from "@m
 import reportRoutes from "@modules/reports/report.routes";
 import userRoutes from "@modules/users/user.routes";
 import commentRoutes from "@modules/comments/comment.routes";
+import likeRoutes from "@modules/likes/like.routes";
 
 const router = Router();
 
@@ -13,4 +14,5 @@ router.use("/posts", postRoutes);
 router.use("/reports", reportRoutes);
 router.use("/users", userRoutes);
 router.use("/comments", commentRoutes);
+router.use("/likes", likeRoutes);
 export default router;

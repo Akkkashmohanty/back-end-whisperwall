@@ -1,6 +1,10 @@
 import { prisma } from "@config/db";
 import { PostResponse } from "./post.types";
 
+/* ============================
+   CREATE POST
+============================ */
+
 export async function createPost(
   profileId: string,
   college: string,
@@ -12,14 +16,26 @@ export async function createPost(
       college,
       authorProfileId: profileId,
     },
+
     select: {
       id: true,
       content: true,
       college: true,
       createdAt: true,
+
+      
+      _count: {
+        select: {
+          likes: true,
+        },
+      },
     },
   });
 }
+
+/* ============================
+   HOME FEED
+============================ */
 
 export async function getHomeFeed(
   college: string,
@@ -30,16 +46,29 @@ export async function getHomeFeed(
       college,
       visibility: "VISIBLE",
     },
+
     orderBy: { createdAt: "desc" },
     take: limit,
+
     select: {
       id: true,
       content: true,
       college: true,
       createdAt: true,
+
+      
+      _count: {
+        select: {
+          likes: true,
+        },
+      },
     },
   });
 }
+
+/* ============================
+   FOR YOU FEED
+============================ */
 
 export async function getForYouFeed(
   limit: number
@@ -48,16 +77,29 @@ export async function getForYouFeed(
     where: {
       visibility: "VISIBLE",
     },
+
     orderBy: { createdAt: "desc" },
     take: limit,
+
     select: {
       id: true,
       content: true,
       college: true,
       createdAt: true,
+
+      
+      _count: {
+        select: {
+          likes: true,
+        },
+      },
     },
   });
 }
+
+/* ============================
+   COLLEGE FEED
+============================ */
 
 export async function getCollegeFeed(
   college: string,
@@ -68,13 +110,22 @@ export async function getCollegeFeed(
       college,
       visibility: "VISIBLE",
     },
+
     orderBy: { createdAt: "desc" },
     take: limit,
+
     select: {
       id: true,
       content: true,
       college: true,
       createdAt: true,
+
+      
+      _count: {
+        select: {
+          likes: true,
+        },
+      },
     },
   });
 }
