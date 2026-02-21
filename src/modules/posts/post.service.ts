@@ -24,6 +24,17 @@ export async function createPost(
       createdAt: true,
 
       
+      isRepost: true,
+      originalPost: {
+        select: {
+          id: true,
+          content: true,
+          college: true,
+          createdAt: true,
+        },
+      },
+
+      
       _count: {
         select: {
           likes: true,
@@ -57,6 +68,17 @@ export async function getHomeFeed(
       createdAt: true,
 
       
+      isRepost: true,
+      originalPost: {
+        select: {
+          id: true,
+          content: true,
+          college: true,
+          createdAt: true,
+        },
+      },
+
+      
       _count: {
         select: {
           likes: true,
@@ -86,6 +108,17 @@ export async function getForYouFeed(
       content: true,
       college: true,
       createdAt: true,
+
+      
+      isRepost: true,
+      originalPost: {
+        select: {
+          id: true,
+          content: true,
+          college: true,
+          createdAt: true,
+        },
+      },
 
       
       _count: {
@@ -119,6 +152,17 @@ export async function getCollegeFeed(
       content: true,
       college: true,
       createdAt: true,
+
+      
+      isRepost: true,
+      originalPost: {
+        select: {
+          id: true,
+          content: true,
+          college: true,
+          createdAt: true,
+        },
+      },
 
       
       _count: {

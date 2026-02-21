@@ -163,17 +163,26 @@ model Post {
   content            String
   college            String
   authorProfileId    String
-  visibility         PostVisibility   @default(VISIBLE)
-  reportCount        Int              @default(0)
-  createdAt          DateTime         @default(now())
+  visibility         PostVisibility    @default(VISIBLE)
+  reportCount        Int               @default(0)
 
-  authorProfile      AnonymousProfile @relation(fields: [authorProfileId], references: [id])
+  originalPostId     String?
+  isRepost           Boolean          @default(false)
+
+  createdAt          DateTime          @default(now())
+
+  authorProfile      AnonymousProfile  @relation(fields: [authorProfileId], references: [id])
+
+  originalPost       Post?             @relation("RepostRelation", fields: [originalPostId], references: [id])
+  reposts             Post[]           @relation("RepostRelation")
+
   reports            Report[]
-  likes              PostLike[]
   comments           Comment[]
+  likes              PostLike[]
 
   @@index([college])
   @@index([createdAt])
+  @@index([originalPostId])
 }
 
 /* ============================
