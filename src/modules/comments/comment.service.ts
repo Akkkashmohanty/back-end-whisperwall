@@ -3,6 +3,10 @@ import { CommentResponse } from "./comment.types";
 
 const AUTO_HIDE_THRESHOLD = 3;
 
+/* ============================
+   CREATE COMMENT
+============================ */
+
 export async function createComment(
   profileId: string,
   postId: string,
@@ -16,9 +20,17 @@ export async function createComment(
       authorProfileId: profileId,
       parentId,
     },
+
     include: {
       authorProfile: {
         select: { username: true },
+      },
+
+      
+      _count: {
+        select: {
+          likes: true,
+        },
       },
     },
   });
@@ -29,8 +41,15 @@ export async function createComment(
     createdAt: comment.createdAt,
     authorUsername: comment.authorProfile.username,
     parentId: comment.parentId,
+
+    
+    likeCount: comment._count.likes,
   };
 }
+
+/* ============================
+   GET COMMENTS
+============================ */
 
 export async function getCommentsForPost(
   postId: string,
@@ -43,19 +62,41 @@ export async function getCommentsForPost(
       visibility: "VISIBLE",
       parentId: null,
     },
+
     take: limit,
     skip: cursor ? 1 : 0,
     cursor: cursor ? { id: cursor } : undefined,
+
     orderBy: { createdAt: "desc" },
+
     include: {
       authorProfile: {
         select: { username: true },
       },
+
+      
+      _count: {
+        select: {
+          likes: true,
+        },
+      },
+
       replies: {
         where: { visibility: "VISIBLE" },
+
         include: {
-          authorProfile: { select: { username: true } },
+          authorProfile: {
+            select: { username: true },
+          },
+
+          
+          _count: {
+            select: {
+              likes: true,
+            },
+          },
         },
+
         orderBy: { createdAt: "asc" },
       },
     },
@@ -67,15 +108,26 @@ export async function getCommentsForPost(
     createdAt: c.createdAt,
     authorUsername: c.authorProfile.username,
     parentId: c.parentId,
+
+    
+    likeCount: c._count.likes,
+
     replies: c.replies.map((r) => ({
       id: r.id,
       content: r.content,
       createdAt: r.createdAt,
       authorUsername: r.authorProfile.username,
       parentId: r.parentId,
+
+      
+      likeCount: r._count.likes,
     })),
   }));
 }
+
+/* ============================
+   REPORT COMMENT
+============================ */
 
 export async function reportComment(
   commentId: string,
@@ -92,6 +144,7 @@ export async function reportComment(
 
   const updated = await prisma.comment.update({
     where: { id: commentId },
+
     data: {
       reportCount: { increment: 1 },
     },
@@ -100,6 +153,7 @@ export async function reportComment(
   if (updated.reportCount + 1 >= AUTO_HIDE_THRESHOLD) {
     await prisma.comment.update({
       where: { id: commentId },
+
       data: { visibility: "HIDDEN" },
     });
   }

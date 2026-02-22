@@ -4,4 +4,7 @@ export interface CommentResponse {
   createdAt: Date;
   authorUsername: string;
   parentId?: string | null;
+
+  
+  likeCount: number;
 }
