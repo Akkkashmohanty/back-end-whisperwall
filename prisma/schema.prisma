@@ -98,7 +98,8 @@ model AnonymousProfile {
 
   commentReports CommentReport[]
 
-  postLikes PostLike[]
+  postLikes     PostLike[]
+  commentLikes  CommentLike[]
 }
 
 /* ============================
@@ -224,6 +225,7 @@ model Comment {
   replies          Comment[]          @relation("CommentReplies")
 
   reports          CommentReport[]
+  likes            CommentLike[]
 
   @@index([postId, createdAt])
   @@index([authorProfileId])
@@ -262,5 +264,23 @@ model PostLike {
 
   @@unique([postId, profileId])
   @@index([postId])
+  @@index([profileId])
+}
+
+/* ============================
+   COMMENT LIKE MODULE
+============================ */
+
+model CommentLike {
+  id         String   @id @default(uuid())
+  commentId  String
+  profileId  String
+  createdAt  DateTime @default(now())
+
+  comment    Comment          @relation(fields: [commentId], references: [id])
+  profile    AnonymousProfile @relation(fields: [profileId], references: [id])
+
+  @@unique([commentId, profileId])
+  @@index([commentId])
   @@index([profileId])
 }
