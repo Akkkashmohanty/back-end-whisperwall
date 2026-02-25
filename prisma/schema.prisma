@@ -87,6 +87,7 @@ model User {
   profile        AnonymousProfile?
   verification   VerificationRequest?
   resetRequests  PasswordResetRequest[]
+  notifications  Notification[]
 }
 
 /* ============================
@@ -109,6 +110,7 @@ model AnonymousProfile {
 
   postLikes     PostLike[]
   commentLikes  CommentLike[]
+  notifications Notification[]
 }
 
 /* ============================
@@ -292,4 +294,36 @@ model CommentLike {
   @@unique([commentId, profileId])
   @@index([commentId])
   @@index([profileId])
+}
+
+/* ============================
+   NOTIFICATION MODULE
+============================ */
+
+model Notification {
+  id        String           @id @default(uuid())
+
+  // Receiver (real user, not profile)
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+
+  type      NotificationType
+
+  // Related entity
+  postId    String?
+  commentId String?
+
+  // Anonymous actor (who triggered it)
+  actorProfileId String?
+  actorProfile    AnonymousProfile? @relation(fields: [actorProfileId], references: [id])
+
+  // Metadata (JSON for future)
+  meta      Json?
+
+  isRead    Boolean          @default(false)
+
+  createdAt DateTime         @default(now())
+
+  @@index([userId, isRead])
+  @@index([createdAt])
 }
