@@ -23,7 +23,7 @@ export async function list(req: Request, res: Response) {
 ============================ */
 
 export async function read(req: Request, res: Response) {
-  const { id } = req.params;
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const { userId } = (req as any).user;
 
   await service.markAsRead(id, userId);
