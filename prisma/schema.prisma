@@ -58,6 +58,15 @@ enum CommentVisibility {
   DELETED
 }
 
+enum NotificationType {
+  POST_LIKED
+  POST_COMMENTED
+  COMMENT_REPLIED
+  POST_REPOSTED
+  ACCOUNT_APPROVED
+  PASSWORD_RESET_APPROVED
+}
+
 /* ============================
    CORE USER (REAL IDENTITY)
 ============================ */
