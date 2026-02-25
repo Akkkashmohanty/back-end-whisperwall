@@ -8,6 +8,7 @@ import likeRoutes from "@modules/likes/like.routes";
 import repostRoutes from "@modules/reposts/repost.routes";
 import commentLikeRoutes from "@modules/comment-likes/commentLike.routes";
 import trendingRoutes from "@modules/trending/trending.routes";
+import notificationRoutes from "@modules/notifications/notification.routes";
 
 const router = Router();
 
@@ -21,4 +22,5 @@ router.use("/likes", likeRoutes);
 router.use("/reposts", repostRoutes);
 router.use("/comment-likes", commentLikeRoutes);
 router.use("/trending", trendingRoutes);
+router.use("/notifications", notificationRoutes);
 export default router;
