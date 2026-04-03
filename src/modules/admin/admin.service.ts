@@ -54,3 +54,27 @@ export async function approveReset(requestId: string) {
 
   await sendResetEmail(req.user.email!, token);
 }
+
+export async function getStats() {
+  const [
+    totalUsers,
+    activeUsers,
+    posts,
+    comments,
+    reports,
+  ] = await Promise.all([
+    prisma.user.count(),
+    prisma.user.count({ where: { status: "ACTIVE" } }),
+    prisma.post.count(),
+    prisma.comment.count(),
+    prisma.report.count(),
+  ]);
+
+  return {
+    totalUsers,
+    activeUsers,
+    posts,
+    comments,
+    reports,
+  };
+}

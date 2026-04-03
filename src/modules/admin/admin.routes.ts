@@ -11,5 +11,6 @@ router.post("/approve-user", c.approveUser);
 router.post("/reject-user", c.rejectUser);
 router.get("/password-reset-requests", c.resetRequests);
 router.post("/approve-password-reset", c.approveReset);
+router.get("/stats", c.stats);
 
 export default router;

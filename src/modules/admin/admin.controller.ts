@@ -29,3 +29,8 @@ export async function approveReset(req: Request, res: Response) {
   await service.approveReset(requestId);
   res.json({ success: true });
 }
+
+export async function stats(req: Request, res: Response) {
+  const data = await service.getStats();
+  res.json(data);
+}
